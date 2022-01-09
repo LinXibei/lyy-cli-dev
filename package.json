@@ -1,0 +1,18 @@
+{
+  "name": "lyy-cli-dev",
+  "version": "1.0.1",
+  "description": "lyy-cli dev",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "lyy-cli-dev": "@lyy-cli-dev/core"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}
