@@ -17,13 +17,20 @@ const log = require('@lyy-cli-dev/log');
 const colors = require('colors/safe');
 const constant = require('./const');
 const semver = require('semver');
+const pathExists = require('path-exists').sync;
+const userHome = require('os').homedir();
 module.exports = core;
 
+let args;
 function core() {
   // TODO
   try {
     checkPkgVersion();
     checkNodeVersion();
+    checkRoot();
+    checkUserHome();
+    checkInputArgs();
+    log.verbose('debug', 'test debug');
   } catch(e) {
     log.error(e.message);
   }
@@ -40,4 +47,27 @@ function checkNodeVersion() {
   if (!semver.gte(curVersion, lowestVersion)) {
     throw new Error(colors.red(`lyy-cli-dev 需要安装v-${lowestVersion} 以上版本的node.js`));
   }
+}
+function checkRoot() {
+  // 默认调取了process.seteuid() 和process.setguid()
+  const rootCheck = require("root-check");
+  rootCheck();
+  // console.log(process.geteuid());// 获取当前uid，0为root
+}
+function checkUserHome() {
+  // user-home，用到的是os homedir方法实现
+  // path-exists，用到的是fs.accessSync方法实现
+  if (!userHome || !pathExists(userHome)) {
+    throw new Error(colors.red('当前用户主目录不存在'));
+  }
+}
+
+function checkInputArgs() {
+  const minimist = require('minimist');
+  args = minimist(process.argv.slice(2));
+  checkArgs();
+}
+function checkArgs() {
+  process.env.LOG_LEVEL = args.debug ? 'verbose' : 'info';
+  log.level = process.env.LOG_LEVEL;
 }
